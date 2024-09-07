@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -20,18 +21,43 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  void _toggleEscolha() {
-    bool _isPedra = false;
-    bool _isPapel = false;
-    bool _isTesoura = false;
-    
-    if (!_isPedra) {
-      _isPedra = true;
-    } else if (!_isPapel) {
-      _isPapel = true;
+  int meuPlacar = 0;
+  int placarPC = 0;
+  String resultado = '';
+  String minhaEscolha = '';
+  String escolhaPC = '';
+
+  String _jogadaPCAleatoria() {
+    Random random = Random();
+    int alaetoria = random.nextInt(3);
+    if (alaetoria == 0) {
+      return 'Pedra';
+    } else if (alaetoria == 1) {
+      return 'Papel';
     } else {
-      _isTesoura = false;
+      return 'Tesoura';
     }
+  }
+
+  void comecarJogo(String _minhaEscolha) {
+    setState(() {
+      minhaEscolha = _minhaEscolha;
+      escolhaPC = _jogadaPCAleatoria();
+
+      if (minhaEscolha == escolhaPC) {
+        resultado = 'Empate';
+      } else if (
+        (minhaEscolha == 'Pedra' && escolhaPC == 'Tesoura') ||
+        (minhaEscolha == 'Papel' && escolhaPC == 'Pedra') ||
+        (minhaEscolha == 'Tesoura' && escolhaPC == 'Papel')) {
+          print(resultado);
+          resultado = 'Você ganhou!';
+          meuPlacar++;
+      } else {
+        resultado = "Você perdeu!";
+        placarPC++;
+      }
+    });
   }
 
   @override
@@ -49,26 +75,14 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                GestureDetector(
-                  child: Container(
-                    child: Center(
-                      child: Text('Pedra')
-                    ),
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[350],
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                  ),
-                ),
                 Container(
-                  // child:  TextButton.icon(
-                  //   onPressed: _toggleEscolha,
-                  //   label: ElevatedButton(
-                  //     onPressed: _toggleEscolha,
-                  //   ),
-                  // ),
+                  child: Center(
+                    child: GestureDetector(
+                      child: TextButton(
+                        onPressed: () {comecarJogo('Pedra');},
+                        child: Text('Pedra'))
+                    )
+                  ),
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
@@ -78,7 +92,24 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Container(
                   child: Center(
-                    child: Text('Tesoura'),
+                    child: GestureDetector(
+                      child: TextButton(
+                        onPressed: () {comecarJogo('Papel');},
+                        child: Text('Papel')),
+                    )
+                  ),
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[350],
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                Container(
+                  child: Center(
+                    child: TextButton(
+                      onPressed: () {comecarJogo('Tesoura');},
+                      child: Text('Tesoura')),
                   ),
                   width: 100,
                   height: 100,
@@ -91,6 +122,8 @@ class _HomePageState extends State<HomePage> {
             ),
             Text('Jogada do Computador'),
             Container(
+              child: Center(
+                child: Text('$escolhaPC')),
               width: 100,
               height: 100,
               decoration: BoxDecoration(
@@ -98,8 +131,7 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(50),
               ),
             ),
-            Text('Resultado'),
-            Text('Talvez eu tenha que colocar um TextField!!'),
+            Text('Resultado: $resultado'),
             Container(
               width: 250,
               height: 90,
@@ -114,14 +146,14 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('Você'),
-                      Text('5')
+                      Text('$meuPlacar')
                     ]
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('PC'),
-                      Text('5')
+                      Text('$placarPC')
                     ],
                   ),
                 ],
